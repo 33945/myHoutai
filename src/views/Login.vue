@@ -11,6 +11,7 @@ const formState = reactive({
 const formRef = ref();
 //表单登陆区域
 const area_contain = ref(null);
+//try22222
 
 const checkUser = async (_rule, value) => {
   if (value === "") {
