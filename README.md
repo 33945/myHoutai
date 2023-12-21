@@ -11,3 +11,9 @@
 - 配置 hooks
 - 封装 axios 请求
 - 对 vue、vue-router 等模块定义声明文件
+
+
+
+in 1.00 
+
+这个版本中,配置了tailwindcss 构建了登录页的基本雏形(按需引入的修改完成)
