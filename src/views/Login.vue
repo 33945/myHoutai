@@ -4,12 +4,50 @@ import { UserOutlined, LockOutlined } from "@ant-design/icons-vue";
 const formState = reactive({
   username: "",
   password: "",
+  userTip: "",
+  pwdTip: "",
   remember: true,
 });
+const formRef = ref();
+//表单登陆区域
 const area_contain = ref(null);
+
+const checkUser = async (_rule, value) => {
+  if (value === "") {
+    return Promise.reject("Please input the password");
+  } else {
+    if (formState.username !== "") {
+      formRef.value.validateFields("checkPass");
+    }
+    return Promise.resolve();
+  }
+  // const reg = /^[\u4e00-\u9fa5_a-zA-Z0-9_]{2,20}$/;
+};
+const rules = {
+  username: [
+    {
+      required: true,
+      validator: checkUser,
+      trigger: "change",
+    },
+  ],
+};
+// const pwdReg = (e) => {
+//   const reg = /^[a-zA-Z0-9_]{6,16}$/;
+//   if (reg.test(e.target.value)) {
+//     passwordFlag.value = true;
+//   } else {
+//     passwordFlag.value = false;
+//     if (e.target.value === "") {
+//       formState.pwdTip = "密码不能为空";
+//     } else if (e.target.value.length < 2 || e.target.value.length > 16) {
+//       formState.pwdTip = "密码长度为2-16位";
+//     }
+//   }
+// };
 const onFinish = (values) => {
+  // console.log(formState.username, formState.password);
   console.log("Success:", values);
-  console.log(111, 2222);
 };
 const onFinishFailed = (errorInfo) => {
   console.log("Failed:", errorInfo);
@@ -18,12 +56,12 @@ const disabled = computed(() => {
   return !(formState.username && formState.password);
 });
 const add = () => {
-  area_contain.value.style.display = "none";
+  // area_contain.value.style.display = "none";
 };
 </script>
 
 <template>
-  <div class="containers bg-[#123456]">
+  <div class="containers">
     <div class="content">
       <div class="logo" style="font-size: 20px">
         <svg
@@ -56,6 +94,7 @@ const add = () => {
               :model="formState"
               name="normal_login"
               class="login-form"
+              :rules="rules"
               @finish="onFinish"
               @finishFailed="onFinishFailed"
             >
@@ -63,29 +102,47 @@ const add = () => {
                 :rules="[
                   { required: true, message: 'Please input your username!' },
                 ]"
+                class="relative"
               >
                 <a-input
                   placeholder="请输入用户名"
                   v-model:value="formState.username"
+                  @blur="userReg"
                 >
                   <template #prefix>
                     <UserOutlined class="site-form-item-icon" />
                   </template>
                 </a-input>
+                <!-- <transition name="tip">
+                  <div class="text-[red] absolute left-4" v-show="!userFlag">
+                    {{ formState.userTip }}
+                  </div>
+                </transition> -->
               </a-form-item>
+
               <a-form-item
                 :rules="[
                   { required: true, message: 'Please input your password!' },
                 ]"
+                class="relative"
               >
                 <a-input-password
                   placeholder="请输入密码"
                   v-model:value="formState.password"
+                  @blur="pwdReg"
                 >
                   <template #prefix>
                     <LockOutlined class="site-form-item-icon" />
                   </template>
                 </a-input-password>
+                <!-- <transition name="tip">
+                  <div
+                    class="text-[red] absolute left-4"
+                    v-show="!passwordFlag"
+                  >
+                    {{ formState.pwdTip }}
+                  </div>
+                </transition> -->
               </a-form-item>
               <a-form-item>
                 <a-form-item name="remember" no-style>
@@ -358,5 +415,18 @@ const add = () => {
 }
 .end_flex > * {
   width: 150px;
+}
+/*过渡动画*/
+.tip-enter-from,
+.tip-leave-to {
+  opacity: 0;
+}
+.tip-enter-to,
+.tip-leave {
+  opacity: 1;
+}
+.tip-enter-active,
+.tip-leave-active {
+  transition: all 1s;
 }
 </style>
